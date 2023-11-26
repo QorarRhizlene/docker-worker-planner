@@ -12,10 +12,11 @@ const args = () => ({ a: randInt(0, 40), b: randInt(0, 40) })
 const generateTasks = (i) =>
   new Array(i).fill(1).map((_) => ({ type: taskType(), args: args() }))
 
-let workers = [
-  // { url: 'http://localhost:8080', id: '' }
-]
-
+  let workers = [
+    { url: 'http://docker-worker1:8080', id: '' },
+    { url: 'http://docker-worker1-1:8070', id: '1' }
+  ];
+  
 const app = express()
 app.use(express.json())
 app.use(
@@ -76,7 +77,10 @@ const main = async () => {
   while (taskToDo > 0) {
     await wait(100)
     if (workers.length === 0 || tasks.length === 0) continue
-    sendTask(workers[0], tasks[0])
+    workers.forEach(worker => {
+      sendTask(worker, tasks[0]);
+    });
+
   }
   console.log('end of tasks')
   server.close()

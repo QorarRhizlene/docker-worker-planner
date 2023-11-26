@@ -1,10 +1,10 @@
+# Dockerfile
 FROM node:14
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
-ENV MULT=true \ 
-ADD=true \
-PORT=8080
+ENV MULT=true 
+ENV ADD=true
+EXPOSE 8080 8070
 COPY . .
-EXPOSE 8080
 CMD ["node", "main.js"]

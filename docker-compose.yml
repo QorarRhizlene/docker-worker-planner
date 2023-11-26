@@ -1,28 +1,35 @@
 version: '3'
 
 services:
-
- planner:
+  planner:
     build:
       context: ./planner
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
+    networks:
+      - planner-worker
 
-      
-
- worker:
+  worker:
+    container_name: docker-worker1
     build:
       context: ./worker
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
+    networks:
+      - planner-worker
 
-
+  worker1:
+    container_name: docker-worker1-1
+    build:
+      context: ./worker
+      dockerfile: Dockerfile
+    ports:
+      - "8070:8070"  # J'ai modifié cette ligne pour que le port interne corresponde au port externe
+    networks:
+      - planner-worker
 
 networks:
   planner-worker:
     external: true
-
-#docker network create planner-worker
-#docker network ls
