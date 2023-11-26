@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+
+ planner:
+    build:
+      context: ./planner
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+
+      
+
+ worker:
+    build:
+      context: ./worker
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+
+
+
+networks:
+  planner-worker:
+    external: true
+
+#docker network create planner-worker
+#docker network ls
