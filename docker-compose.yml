@@ -1,41 +1,51 @@
 version: '3'
-
 services:
-
- planner:
+  planner:
     build:
-      context: ./planner
-      dockerfile: DockerFile
+      context: .
+      dockerfile: planner/DockerFile
+    depends_on:
+      - gen_worker
+      - mult_worker
+      - add_worker
+    networks:
+      - mynetwork
     ports:
       - "3000:3000"
 
-    networks:
-      - planner-worker
-      
-
- worker:
-    container_name: worker1
+  gen_worker:
     build:
-      context: ./worker
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
+      context: .
+      dockerfile: worker/Dockerfile
     networks:
-      - planner-worker
+      - mynetwork
+    deploy:
+      replicas: 10
+  
+  mult_worker:
+    image: image/worker
+    depends_on:
+      - gen_worker
+    networks:
+      - mynetwork
+    environment:
+      - ADD=false
+    deploy:
+      replicas: 10
+  
+  add_worker:
+    image: image/worker
+    depends_on:
+      - gen_worker
+    networks:
+      - mynetwork
+    environment:
+      - MULT=false
+    deploy:
+      replicas: 10
 
- worker1:
-    container_name: worker2
-    build:
-      context: ./worker
-      dockerfile: Dockerfile
-    ports:
-      - "8070:8080"
-    networks:
-      - planner-worker
+
 
 networks:
-  planner-worker:
-    external: true
-
-#docker network create planner-worker
-#docker network ls
+  mynetwork:
+    driver: bridge
